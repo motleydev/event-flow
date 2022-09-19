@@ -1,6 +1,6 @@
 import { ReactElement, ReactNode } from "react";
 import { NextPage } from "next";
-import type { AppInitialProps, AppProps } from "next/app";
+import type { AppProps } from "next/app";
 import { ThemeProvider } from "next-themes";
 import "../styles/globals.css";
 import withUrql from "../utils/client";
@@ -15,8 +15,6 @@ type AppPropsWithLayout = AppProps & {
 };
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-  const getLayout = Component.getLayout ?? ((page) => page);
-
   return (
     <ThemeProvider defaultTheme="cupcake">
       <div className="container max-w-5xl mx-auto">

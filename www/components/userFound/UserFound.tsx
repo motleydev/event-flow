@@ -1,6 +1,5 @@
 import React from "react";
 import { useVerifyUserMutation } from "../../generated/graphql";
-import { client } from "../../utils/client";
 import { useStore } from "../../store/store";
 
 type Props = {};

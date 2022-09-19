@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { InferGetServerSidePropsType } from "next";
 import type { NextPage } from "next";
 import { GetServerSideProps } from "next";
-var QRCode = require("qrcode");
 import { client } from "../../utils/client";
 import {
   GetUserBySlug,
@@ -59,10 +58,6 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
         "X-Hasura-User-Id": user.id.toString(),
       },
     });
-
-    //   code = QRCode.toDataURL(user.id, function (err: any, url: string) {
-    //     return url
-    //   })
   }
 
   const data: Data = { user, token };
