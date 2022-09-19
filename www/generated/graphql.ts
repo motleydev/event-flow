@@ -803,10 +803,10 @@ export type Uuid_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['uuid']>>;
 };
 
-export type Unnamed_1_QueryVariables = Exact<{ [key: string]: never; }>;
+export type AllRegistrantsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type Unnamed_1_Query = { __typename?: 'query_root', user: Array<{ __typename?: 'user', id: any }> };
+export type AllRegistrantsQuery = { __typename?: 'query_root', user: Array<{ __typename?: 'user', id: any }> };
 
 export type RegisterUserMutationVariables = Exact<{
   name?: InputMaybe<Scalars['String']>;
@@ -831,7 +831,13 @@ export type VerifyUserMutationVariables = Exact<{
 export type VerifyUserMutation = { __typename?: 'mutation_root', update_user_by_pk?: { __typename?: 'user', id: any, name: string, verified: boolean } | null };
 
 
-
+export const AllRegistrants = gql`
+    query AllRegistrants {
+  user {
+    id
+  }
+}
+    `;
 export const RegisterUser = gql`
     mutation RegisterUser($name: String, $email: String) {
   insert_user_one(object: {name: $name, email: $email}) {
@@ -2666,16 +2672,16 @@ export default {
   }
 } as unknown as IntrospectionQuery;
 
-export const Document = gql`
-    {
+export const AllRegistrantsDocument = gql`
+    query AllRegistrants {
   user {
     id
   }
 }
     `;
 
-export function useQuery(options?: Omit<Urql.UseQueryArgs<QueryVariables>, 'query'>) {
-  return Urql.useQuery<Query, QueryVariables>({ query: Document, ...options });
+export function useAllRegistrantsQuery(options?: Omit<Urql.UseQueryArgs<AllRegistrantsQueryVariables>, 'query'>) {
+  return Urql.useQuery<AllRegistrantsQuery, AllRegistrantsQueryVariables>({ query: AllRegistrantsDocument, ...options });
 };
 export const RegisterUserDocument = gql`
     mutation RegisterUser($name: String, $email: String) {

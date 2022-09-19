@@ -42,7 +42,7 @@ export default function RegisterUser({}: Props) {
         </label>
       </div>
       <button className="btn btn-secondary mt-6" type="submit">
-        Let's do it
+        Signup
       </button>
     </form>
   );

@@ -21,7 +21,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     <ThemeProvider defaultTheme="cupcake">
       <div className="container max-w-5xl mx-auto">
         <Header />
-        {getLayout(<Component {...pageProps} />)}
+        <Component {...pageProps} />
       </div>
     </ThemeProvider>
   );
