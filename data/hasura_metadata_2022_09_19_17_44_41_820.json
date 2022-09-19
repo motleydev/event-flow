@@ -1,0 +1,242 @@
+{
+  "resource_version": 33,
+  "metadata": {
+    "version": 3,
+    "sources": [
+      {
+        "name": "default",
+        "kind": "postgres",
+        "tables": [
+          {
+            "table": {
+              "name": "login_request",
+              "schema": "public"
+            },
+            "object_relationships": [
+              {
+                "name": "user",
+                "using": {
+                  "foreign_key_constraint_on": "user_id"
+                }
+              }
+            ],
+            "event_triggers": [
+              {
+                "name": "create_email_trigger",
+                "definition": {
+                  "enable_manual": false,
+                  "update": {
+                    "columns": "*"
+                  }
+                },
+                "retry_conf": {
+                  "interval_sec": 10,
+                  "num_retries": 0,
+                  "timeout_sec": 60
+                },
+                "webhook": "https://event-flow.vercel.app/api/sendEmail",
+                "request_transform": {
+                  "body": {
+                    "action": "transform",
+                    "template": "{\n\n    \"id\": {{$body.event.data.new.id}},\n    \"slug\": {{$body.event.data.new.slug}}\n\n}"
+                  },
+                  "method": "POST",
+                  "query_params": {},
+                  "template_engine": "Kriti",
+                  "version": 2
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "name": "user",
+              "schema": "public"
+            },
+            "array_relationships": [
+              {
+                "name": "login_requests",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "user_id",
+                    "table": {
+                      "name": "login_request",
+                      "schema": "public"
+                    }
+                  }
+                }
+              }
+            ],
+            "event_triggers": [
+              {
+                "name": "create_first_session",
+                "definition": {
+                  "enable_manual": false,
+                  "insert": {
+                    "columns": "*"
+                  }
+                },
+                "retry_conf": {
+                  "interval_sec": 10,
+                  "num_retries": 0,
+                  "timeout_sec": 60
+                },
+                "webhook": "https://event-flow-demo.hasura.app/api/rest/user/create/session",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwczovL2hhc3VyYS5pby9qd3QvY2xhaW1zIjp7IngtaGFzdXJhLWFsbG93ZWQtcm9sZXMiOlsiYWRtaW4iXSwieC1oYXN1cmEtZGVmYXVsdC1yb2xlIjoiYWRtaW4ifSwiaWF0IjoxNjYzNTY5NDExfQ.xq9HBRPPt1VckxhViyKYbilPRGjysQU412gl4uyvW90"
+                  }
+                ],
+                "request_transform": {
+                  "body": {
+                    "action": "transform",
+                    "template": "{\n  \"userId\": \"{{$body.event.data.new.id}}\"\n}"
+                  },
+                  "method": "POST",
+                  "query_params": {},
+                  "template_engine": "Kriti",
+                  "version": 2
+                }
+              }
+            ]
+          }
+        ],
+        "configuration": {
+          "connection_info": {
+            "database_url": {
+              "from_env": "PG_DB"
+            },
+            "isolation_level": "read-committed",
+            "use_prepared_statements": false
+          }
+        },
+        "customization": {
+          "naming_convention": "hasura-default"
+        }
+      }
+    ],
+    "query_collections": [
+      {
+        "name": "allowed-queries",
+        "definition": {
+          "queries": [
+            {
+              "name": "CreateFirstRequest",
+              "query": "mutation CreateLoginRequest($userId:uuid){\n  insert_login_request_one(object:{\n    user_id:$userId\n  }) {\n    id\n  }\n}"
+            }
+          ]
+        }
+      }
+    ],
+    "allowlist": [
+      {
+        "collection": "allowed-queries",
+        "scope": {
+          "global": true
+        }
+      }
+    ],
+    "actions": [
+      {
+        "name": "sendEmail",
+        "definition": {
+          "handler": "https://api.postmarkapp.com/email/withTemplate",
+          "output_type": "EmailOutput",
+          "headers": [
+            {
+              "name": "X-Postmark-Server-Token",
+              "value": "22292d74-6e3b-4403-8560-3f5558f84c8c"
+            }
+          ],
+          "arguments": [
+            {
+              "name": "payload",
+              "type": "EmailPayload!"
+            }
+          ],
+          "request_transform": {
+            "body": {
+              "action": "transform",
+              "template": "{\n          \"From\": \"{{$body.input.payload.from}}\",\n          \"To\": \"{{$body.input.payload.to}}\",\n          \"TemplateId\": 29225486,\n          \"TemplateModel\": {\n              \"name\": \"{{$body.input.payload.name}}\",\n              \"slug\": \"{{$body.input.payload.slug}}\"\n          }\n      }"
+            },
+            "method": "POST",
+            "query_params": {},
+            "template_engine": "Kriti",
+            "version": 2
+          },
+          "type": "mutation",
+          "kind": "synchronous"
+        }
+      }
+    ],
+    "custom_types": {
+      "input_objects": [
+        {
+          "name": "EmailPayload",
+          "fields": [
+            {
+              "name": "to",
+              "type": "String!"
+            },
+            {
+              "name": "from",
+              "type": "String!"
+            },
+            {
+              "name": "slug",
+              "type": "String!"
+            },
+            {
+              "name": "name",
+              "type": "String!"
+            }
+          ]
+        }
+      ],
+      "objects": [
+        {
+          "name": "EmailOutput",
+          "fields": [
+            {
+              "name": "To",
+              "type": "String"
+            },
+            {
+              "name": "SubmittedAt",
+              "type": "String"
+            },
+            {
+              "name": "MessageID",
+              "type": "String"
+            },
+            {
+              "name": "ErrorCode",
+              "type": "Int"
+            },
+            {
+              "name": "Message",
+              "type": "String"
+            }
+          ]
+        }
+      ]
+    },
+    "rest_endpoints": [
+      {
+        "comment": "",
+        "definition": {
+          "query": {
+            "collection_name": "allowed-queries",
+            "query_name": "CreateFirstRequest"
+          }
+        },
+        "methods": [
+          "POST"
+        ],
+        "name": "CreateFirstRequest",
+        "url": "user/create/session"
+      }
+    ]
+  }
+}
