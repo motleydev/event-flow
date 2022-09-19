@@ -49,7 +49,7 @@ const useStore = create<EventFlow>()(
     persist(
       (set, get) => ({
         user: { authed: AUTH.NOT_AUTHED },
-        formStatus: FORMSTATUS.LOADING,
+        formStatus: FORMSTATUS.PRISTINE,
         setUser: (user) => {
           set({ user });
         },
