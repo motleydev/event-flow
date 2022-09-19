@@ -1,0 +1,10 @@
+mutation SendEmail(
+  $from: String!
+  $to: String!
+  $slug: String!
+  $name: String!
+) {
+  sendEmail(payload: { from: $from, to: $to, slug: $slug, name: $name }) {
+    SubmittedAt
+  }
+}

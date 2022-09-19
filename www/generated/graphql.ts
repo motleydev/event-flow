@@ -30,6 +30,22 @@ export type Boolean_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['Boolean']>>;
 };
 
+export type EmailOutput = {
+  __typename?: 'EmailOutput';
+  ErrorCode?: Maybe<Scalars['Int']>;
+  Message?: Maybe<Scalars['String']>;
+  MessageID?: Maybe<Scalars['String']>;
+  SubmittedAt?: Maybe<Scalars['String']>;
+  To?: Maybe<Scalars['String']>;
+};
+
+export type EmailPayload = {
+  from: Scalars['String'];
+  name: Scalars['String'];
+  slug: Scalars['String'];
+  to: Scalars['String'];
+};
+
 /** Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'. */
 export type String_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['String']>;
@@ -298,6 +314,7 @@ export type Mutation_Root = {
   insert_user?: Maybe<User_Mutation_Response>;
   /** insert a single row into the table: "user" */
   insert_user_one?: Maybe<User>;
+  sendEmail?: Maybe<EmailOutput>;
   /** update data of the table: "login_request" */
   update_login_request?: Maybe<Login_Request_Mutation_Response>;
   /** update single row of the table: "login_request" */
@@ -362,6 +379,12 @@ export type Mutation_RootInsert_UserArgs = {
 export type Mutation_RootInsert_User_OneArgs = {
   object: User_Insert_Input;
   on_conflict?: InputMaybe<User_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootSendEmailArgs = {
+  payload: EmailPayload;
 };
 
 
@@ -830,6 +853,23 @@ export type VerifyUserMutationVariables = Exact<{
 
 export type VerifyUserMutation = { __typename?: 'mutation_root', update_user_by_pk?: { __typename?: 'user', id: any, name: string, verified: boolean } | null };
 
+export type GetEmailDataQueryVariables = Exact<{
+  id: Scalars['uuid'];
+}>;
+
+
+export type GetEmailDataQuery = { __typename?: 'query_root', login_request_by_pk?: { __typename?: 'login_request', slug: string, user: { __typename?: 'user', name: string, email: string, verified: boolean } } | null };
+
+export type SendEmailMutationVariables = Exact<{
+  from: Scalars['String'];
+  to: Scalars['String'];
+  slug: Scalars['String'];
+  name: Scalars['String'];
+}>;
+
+
+export type SendEmailMutation = { __typename?: 'mutation_root', sendEmail?: { __typename?: 'EmailOutput', SubmittedAt?: string | null } | null };
+
 
 export const AllRegistrants = gql`
     query AllRegistrants {
@@ -869,6 +909,25 @@ export const VerifyUser = gql`
   }
 }
     `;
+export const GetEmailData = gql`
+    query GetEmailData($id: uuid!) {
+  login_request_by_pk(id: $id) {
+    slug
+    user {
+      name
+      email
+      verified
+    }
+  }
+}
+    `;
+export const SendEmail = gql`
+    mutation SendEmail($from: String!, $to: String!, $slug: String!, $name: String!) {
+  sendEmail(payload: {from: $from, to: $to, slug: $slug, name: $name}) {
+    SubmittedAt
+  }
+}
+    `;
 import { IntrospectionQuery } from 'graphql';
 export default {
   "__schema": {
@@ -882,6 +941,53 @@ export default {
       "name": "subscription_root"
     },
     "types": [
+      {
+        "kind": "OBJECT",
+        "name": "EmailOutput",
+        "fields": [
+          {
+            "name": "ErrorCode",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Any"
+            },
+            "args": []
+          },
+          {
+            "name": "Message",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Any"
+            },
+            "args": []
+          },
+          {
+            "name": "MessageID",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Any"
+            },
+            "args": []
+          },
+          {
+            "name": "SubmittedAt",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Any"
+            },
+            "args": []
+          },
+          {
+            "name": "To",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Any"
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
       {
         "kind": "OBJECT",
         "name": "login_request",
@@ -1374,6 +1480,26 @@ export default {
                 "type": {
                   "kind": "SCALAR",
                   "name": "Any"
+                }
+              }
+            ]
+          },
+          {
+            "name": "sendEmail",
+            "type": {
+              "kind": "OBJECT",
+              "name": "EmailOutput",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "payload",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Any"
+                  }
                 }
               }
             ]
@@ -2725,4 +2851,31 @@ export const VerifyUserDocument = gql`
 
 export function useVerifyUserMutation() {
   return Urql.useMutation<VerifyUserMutation, VerifyUserMutationVariables>(VerifyUserDocument);
+};
+export const GetEmailDataDocument = gql`
+    query GetEmailData($id: uuid!) {
+  login_request_by_pk(id: $id) {
+    slug
+    user {
+      name
+      email
+      verified
+    }
+  }
+}
+    `;
+
+export function useGetEmailDataQuery(options: Omit<Urql.UseQueryArgs<GetEmailDataQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetEmailDataQuery, GetEmailDataQueryVariables>({ query: GetEmailDataDocument, ...options });
+};
+export const SendEmailDocument = gql`
+    mutation SendEmail($from: String!, $to: String!, $slug: String!, $name: String!) {
+  sendEmail(payload: {from: $from, to: $to, slug: $slug, name: $name}) {
+    SubmittedAt
+  }
+}
+    `;
+
+export function useSendEmailMutation() {
+  return Urql.useMutation<SendEmailMutation, SendEmailMutationVariables>(SendEmailDocument);
 };

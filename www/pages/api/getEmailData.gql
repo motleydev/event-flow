@@ -1,0 +1,10 @@
+query GetEmailData($id: uuid!) {
+  login_request_by_pk(id: $id) {
+    slug
+    user {
+      name
+      email
+      verified
+    }
+  }
+}
