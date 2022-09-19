@@ -1,0 +1,7 @@
+mutation RegisterUser($name: String, $email: String) {
+  insert_user_one(object: { name: $name, email: $email }) {
+    id
+    name
+    verified
+  }
+}

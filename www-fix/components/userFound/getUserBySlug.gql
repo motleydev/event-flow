@@ -1,0 +1,11 @@
+query GetUserBySlug($slug: String) {
+  login_request(where: { slug: { _eq: $slug } }) {
+    created_at
+    updated_at
+    user {
+      name
+      id
+      verified
+    }
+  }
+}
