@@ -37,6 +37,13 @@ export default async function handler(
       }
     });
 
+  console.log({
+    from: "jesse@hasura.io",
+    name: emailData?.user.name!,
+    slug: emailData?.slug!,
+    to: emailData?.user.email!,
+  });
+
   const data = await client
     .mutation<SendEmailMutation, SendEmailMutationVariables>(SendEmail, {
       from: "jesse@hasura.io",

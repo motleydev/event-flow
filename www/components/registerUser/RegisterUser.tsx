@@ -7,8 +7,8 @@ type Props = {};
 export default function RegisterUser({}: Props) {
   const { register } = useStore();
 
-  const [name, setName] = React.useState("User");
-  const [email, setEmail] = React.useState("user@email.com");
+  const [name, setName] = React.useState("");
+  const [email, setEmail] = React.useState("");
   const submit = (event: FormEvent<Element>) => {
     event.preventDefault();
     register(name, email);
@@ -21,6 +21,7 @@ export default function RegisterUser({}: Props) {
           setName(e.target.value);
         }}
         required={true}
+        placeholder={"Max Mustermann"}
         value={name}
         className="input input-bordered w-full max-w-xs"
       />
@@ -33,6 +34,7 @@ export default function RegisterUser({}: Props) {
           <span>Email</span>
           <input
             type="email"
+            placeholder={"max@mustermann.com"}
             value={email}
             className="input input-bordered"
             onChange={(e) => {
