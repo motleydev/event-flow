@@ -1,11 +1,11 @@
 import type { NextPage } from "next";
+import Toasts from "../components/taosts/Toasts";
 
 const Home: NextPage = () => {
   return (
     <div>
-      <p>Scan me</p>
-
       <img src="/qr-code.svg" width="600px" />
+      <Toasts />
     </div>
   );
 };

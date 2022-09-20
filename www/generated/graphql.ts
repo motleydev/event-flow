@@ -839,6 +839,13 @@ export type RegisterUserMutationVariables = Exact<{
 
 export type RegisterUserMutation = { __typename?: 'mutation_root', insert_user_one?: { __typename?: 'user', id: any, name: string, verified: boolean } | null };
 
+export type StreamUsersSubscriptionVariables = Exact<{
+  date?: InputMaybe<Scalars['timestamptz']>;
+}>;
+
+
+export type StreamUsersSubscription = { __typename?: 'subscription_root', user_stream: Array<{ __typename?: 'user', id: any, name: string, verified: boolean }> };
+
 export type GetUserBySlugQueryVariables = Exact<{
   slug?: InputMaybe<Scalars['String']>;
 }>;
@@ -881,6 +888,18 @@ export const AllRegistrants = gql`
 export const RegisterUser = gql`
     mutation RegisterUser($name: String, $email: String) {
   insert_user_one(object: {name: $name, email: $email}) {
+    id
+    name
+    verified
+  }
+}
+    `;
+export const StreamUsers = gql`
+    subscription StreamUsers($date: timestamptz) {
+  user_stream(
+    batch_size: 2
+    cursor: {initial_value: {updated_at: $date}, ordering: ASC}
+  ) {
     id
     name
     verified
@@ -2821,6 +2840,22 @@ export const RegisterUserDocument = gql`
 
 export function useRegisterUserMutation() {
   return Urql.useMutation<RegisterUserMutation, RegisterUserMutationVariables>(RegisterUserDocument);
+};
+export const StreamUsersDocument = gql`
+    subscription StreamUsers($date: timestamptz) {
+  user_stream(
+    batch_size: 2
+    cursor: {initial_value: {updated_at: $date}, ordering: ASC}
+  ) {
+    id
+    name
+    verified
+  }
+}
+    `;
+
+export function useStreamUsersSubscription<TData = StreamUsersSubscription>(options: Omit<Urql.UseSubscriptionArgs<StreamUsersSubscriptionVariables>, 'query'> = {}, handler?: Urql.SubscriptionHandler<StreamUsersSubscription, TData>) {
+  return Urql.useSubscription<StreamUsersSubscription, TData, StreamUsersSubscriptionVariables>({ query: StreamUsersDocument, ...options }, handler);
 };
 export const GetUserBySlugDocument = gql`
     query GetUserBySlug($slug: String) {

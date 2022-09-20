@@ -1,0 +1,10 @@
+subscription StreamUsers($date: timestamptz) {
+  user_stream(
+    batch_size: 2
+    cursor: { initial_value: { updated_at: $date }, ordering: ASC }
+  ) {
+    id
+    name
+    verified
+  }
+}

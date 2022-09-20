@@ -5,6 +5,7 @@ import { ThemeProvider } from "next-themes";
 import "../styles/globals.css";
 import withUrql from "../utils/client";
 import Header from "../components/header/Header";
+import { Toaster } from "react-hot-toast";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -20,6 +21,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       <div className="container max-w-5xl mx-auto">
         <Header />
         <Component {...pageProps} />
+        <Toaster position="bottom-center" reverseOrder={false} />
       </div>
     </ThemeProvider>
   );
